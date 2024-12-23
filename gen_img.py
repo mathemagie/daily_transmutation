@@ -3,12 +3,17 @@ import requests
 import logging
 import datetime
 import sys
+import traceback
 
-# Add logging configuration at the top
+# Configure logging
+LOG_FILE = "gen_img.log"
 logging.basicConfig(
     level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s",
-    handlers=[logging.StreamHandler()],  # This will print to console as well
+    format="%(asctime)s - %(levelname)s - %(filename)s:%(lineno)d - %(message)s",
+    handlers=[
+        logging.StreamHandler(),  # Output to console
+        logging.FileHandler(LOG_FILE),  # Output to file
+    ],
 )
 logger = logging.getLogger(__name__)
 
@@ -20,11 +25,9 @@ def read_prompt_from_file(filename="output.txt"):
     """
     try:
         logger.info(f"Reading prompt from file: {filename}")
-        # Read the prompt file with explicit encoding
         with open(filename, "r", encoding="utf-8") as file:
             content = file.read()
 
-        # Extract the prompt text between tags
         start_tag = "<prompt>"
         end_tag = "</prompt>"
         start_index = content.find(start_tag) + len(start_tag)
@@ -39,10 +42,14 @@ def read_prompt_from_file(filename="output.txt"):
         return prompt
 
     except FileNotFoundError:
-        logger.error(f"File '{filename}' not found")
+        logger.error(f"File not found: {filename}")
+        return None
+    except ValueError as ve:
+        logger.error(f"ValueError: {ve}")
         return None
     except Exception as e:
-        logger.error(f"Error reading prompt: {str(e)}")
+        logger.error(f"An unexpected error occurred: {e}")
+        logger.error(traceback.format_exc())
         return None
 
 
@@ -66,8 +73,12 @@ def generate_image(prompt):
         )
         logger.info(f"Successfully generated image URL: {result}")
         return result
+    except replicate.ReplicateError as re:
+        logger.error(f"Replicate API error: {re}")
+        return None
     except Exception as e:
-        logger.error(f"Error generating image: {str(e)}")
+        logger.error(f"An unexpected error occurred: {e}")
+        logger.error(traceback.format_exc())
         return None
 
 
@@ -78,12 +89,9 @@ def download_image(img_url, filename="generated_image.jpg"):
     """
     try:
         logger.info(f"Downloading image from URL: {img_url}")
-        # Add timeout to prevent hanging
         response = requests.get(img_url, timeout=30)
-        response.raise_for_status()  # Raise exception for bad status codes
+        response.raise_for_status()
 
-        # Save the image locally
-        # Generate timestamp for unique filename
         timestamp = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
         filename = f"generated_image_{timestamp}.jpg"
         with open(filename, "wb") as f:
@@ -93,28 +101,39 @@ def download_image(img_url, filename="generated_image.jpg"):
 
     except requests.Timeout:
         logger.error("Request timed out while downloading image")
-    except requests.RequestException as e:
-        logger.error(f"Error downloading image: {str(e)}")
+        return False
+    except requests.RequestException as re:
+        logger.error(f"Request error: {re}")
+        return False
     except Exception as e:
-        logger.error(f"Error saving image: {str(e)}")
-    return False
+        logger.error(f"An unexpected error occurred: {e}")
+        logger.error(traceback.format_exc())
+        return False
 
 
 def main():
     logger.info("Starting image generation process")
-    # Read prompt from file
+    if len(sys.argv) != 2:
+        logger.error("Usage: python gen_img.py <prompt_file>")
+        sys.exit(1)
+
     file_prompt = sys.argv[1]
     prompt = read_prompt_from_file(file_prompt)
     if not prompt:
-        return
+        logger.error("Failed to read prompt. Exiting.")
+        sys.exit(1)
 
-    # Generate image
     img_url = generate_image(prompt)
     if not img_url:
-        return
+        logger.error("Failed to generate image. Exiting.")
+        sys.exit(1)
 
-    # Download and save image
-    download_image(img_url)
+    if not download_image(img_url):
+        logger.error("Failed to download image. Exiting.")
+        sys.exit(1)
+
+    logger.info("Image generation process completed successfully.")
+    sys.exit(0)
 
 
 if __name__ == "__main__":
