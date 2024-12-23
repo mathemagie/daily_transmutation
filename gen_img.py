@@ -2,6 +2,7 @@ import replicate
 import requests
 import logging
 import datetime
+import sys
 
 # Add logging configuration at the top
 logging.basicConfig(
@@ -102,7 +103,8 @@ def download_image(img_url, filename="generated_image.jpg"):
 def main():
     logger.info("Starting image generation process")
     # Read prompt from file
-    prompt = read_prompt_from_file()
+    file_prompt = sys.argv[1]
+    prompt = read_prompt_from_file(file_prompt)
     if not prompt:
         return
 
