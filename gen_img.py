@@ -71,7 +71,7 @@ def generate_image(prompt):
         return None
 
 
-def download_image(img_url, filename="generated_image/generated_image.jpg"):
+def download_image(img_url, filename="generated_image.jpg"):
     """
     Download image from URL and save it locally
     Returns True if successful, False otherwise
