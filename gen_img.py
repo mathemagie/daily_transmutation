@@ -2,16 +2,15 @@ import replicate
 import requests
 import logging
 import datetime
+
 # Add logging configuration at the top
 logging.basicConfig(
     level=logging.INFO,
-    format='%(asctime)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler('image_generator.log'),
-        logging.StreamHandler()  # This will print to console as well
-    ]
+    format="%(asctime)s - %(levelname)s - %(message)s",
+    handlers=[logging.StreamHandler()],  # This will print to console as well
 )
 logger = logging.getLogger(__name__)
+
 
 def read_prompt_from_file(filename="output.txt"):
     """
@@ -29,21 +28,22 @@ def read_prompt_from_file(filename="output.txt"):
         end_tag = "</prompt>"
         start_index = content.find(start_tag) + len(start_tag)
         end_index = content.find(end_tag)
-        
+
         if start_index == -1 or end_index == -1:
             logger.error("Prompt tags not found in file")
             raise ValueError("Prompt tags not found in file")
-            
+
         prompt = content[start_index:end_index].strip()
         logger.info(f"Successfully extracted prompt: {prompt[:50]}...")
         return prompt
-    
+
     except FileNotFoundError:
         logger.error(f"File '{filename}' not found")
         return None
     except Exception as e:
         logger.error(f"Error reading prompt: {str(e)}")
         return None
+
 
 def generate_image(prompt):
     """
@@ -68,6 +68,7 @@ def generate_image(prompt):
     except Exception as e:
         logger.error(f"Error generating image: {str(e)}")
         return None
+
 
 def download_image(img_url, filename="generated_image.jpg"):
     """
@@ -97,6 +98,7 @@ def download_image(img_url, filename="generated_image.jpg"):
         logger.error(f"Error saving image: {str(e)}")
     return False
 
+
 def main():
     logger.info("Starting image generation process")
     # Read prompt from file
@@ -111,6 +113,7 @@ def main():
 
     # Download and save image
     download_image(img_url)
+
 
 if __name__ == "__main__":
     main()
