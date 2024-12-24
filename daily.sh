@@ -25,7 +25,7 @@ fi
 
 # Create output directory if it doesn't exist
 echo "describing image..."
-llm < promp.txt -a $INPUT_FILE > output/output.txt
+llm < promp.xml -a $INPUT_FILE > output/output.txt
 echo "generating image..."
 python gen_img.py output/output.txt
 echo "image generated"
