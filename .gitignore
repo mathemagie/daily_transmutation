@@ -3,3 +3,4 @@ output/
 generated_image/
 *.jpg
 *.PNG
+gen_img.log
