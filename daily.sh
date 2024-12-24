@@ -24,8 +24,8 @@ if [ ! -f "$INPUT_FILE" ]; then
 fi
 
 # Create output directory if it doesn't exist
-echo "describing image..."
+echo "describing image with OPENAI API call with LLM CLI ..."
 llm < promp.xml -a $INPUT_FILE > output/output.txt
-echo "generating image..."
+echo "generating image with black-forest-labs/flux-1.1-pro-ultra model ..."
 python gen_img.py output/output.txt
-echo "image generated"
+echo "DONE : image generated"
