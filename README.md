@@ -1,35 +1,38 @@
-###
+# L'Alchimie Numérique (Digital Alchemy)
+> A poetic image transformation pipeline combining AI vision and generation
 
-L'Alchimie Numérique
+## Overview
+L'Alchimie Numérique is an artistic project that transforms images through a three-stage process, combining AI vision, language processing, and image generation. The project name reflects its nature of digital transformation, much like the ancient art of alchemy.
 
-Dans les méandres du code digital,
-Un projet s'éveille, unique et magistral.
-De l'image première à sa métamorphose,
-Une danse binaire, en trois actes se compose.
+## Process
+The transformation occurs in three distinct acts:
 
-Premier acte : l'œil artificiel contemple,
-Les pixels se font mots, le visuel s'exemple.
-LLM déchiffre avec patience,
-Les secrets de l'image en conscience.
+### 1. Image Analysis (Premier acte)
+- Uses OpenAI's vision capabilities through LLM CLI
+- Converts image content into textual descriptions
+- Processes input images and generates detailed descriptions
 
-Deuxième acte : les mots deviennent rêves,
-Dans le prompt se dessine, sans trêve,
-Une vision nouvelle, un monde parallèle,
-Où Replicate forge une image nouvelle.
+### 2. Prompt Engineering (Deuxième acte)
+- Transforms image descriptions into creative prompts
+- Utilizes Replicate's AI models for image generation
+- Creates a bridge between textual and visual representations
 
-Troisième acte : la magie opère,
-Python orchestre, le code prospère.
-Une image naît, unique et fière,
-Polaroid moderne, lumière dernière.
+### 3. Image Generation (Troisième acte)
+- Powered by Python and Replicate API
+- Generates new images based on the transformed prompts
+- Creates unique visual interpretations
 
-Dans ce ballet de bits et d'algorithmes,
-Se cache la beauté des logarithmes.
-D'une image à l'autre, transformation,
-Tel un phénix, renaissance et création.
+## Technical Components
 
-Les fichiers dansent leur chorégraphie,
-Makefile dirige la symphonie.
-De promp.txt à l'ultime vision,
-Une chaîne d'art et d'automation.
+### Scripts
+1. `daily.sh`: Shell script for processing input images
+   - Handles input validation
+   - Creates necessary output directories
+   - Processes images using LLM CLI
 
-llm < promp.txt -a ./31766cd4-eece-45ef-831c-3b4b5bdb5048-1.jpg > output.txt
+2. `gen_img.py`: Python script for image generation
+   - Integrates with Replicate API
+   - Includes robust error handling and logging
+   - Processes prompts from XML-formatted files
+
+### File Structure
